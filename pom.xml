@@ -8,15 +8,19 @@
         <version>3.0.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>es.misei</groupId>
-    <artifactId>Everi</artifactId>
+    <groupId>dev.misei</groupId>
+    <artifactId>produktpilot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Everi</name>
-    <description>Everi</description>
+    <name>ProduktPilot</name>
+    <description>ProduktPilot</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>20</java.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -33,7 +37,10 @@
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -60,23 +67,6 @@
             <version>0.11.5</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.30</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.5.3.Final</version>
@@ -94,7 +84,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
+            <artifactId>mongodb</artifactId>
             <version>1.17.6</version>
             <scope>test</scope>
         </dependency>

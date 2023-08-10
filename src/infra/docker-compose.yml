@@ -1,26 +1,31 @@
-# Use root/example as user/password credentials
 version: '3.1'
 
 services:
-  db:
-    image: mysql:8.0.32
-    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
-    # (this is just an example, not intended to be a production configuration)
-    command: --default-authentication-plugin=mysql_native_password
+  mongo:
+    image: mongo:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: booklink
     ports:
-      - "3306:3306"
-    expose:
-      - "3306"
+      - "27017:27017"
     volumes:
-      - my-db:/tmp/everi/mysql
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 9010:8080
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
-volumes:
-  my-db:
+  mongo-express:
+    image: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: false
+      ME_CONFIG_MONGODB_AUTH_DATABASE: booklink
+      ME_CONFIG_MONGODB_AUTH_USERNAME: admin
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: password
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    depends_on:
+      - mongo
+    ports:
+      - "8888:8081"
+
