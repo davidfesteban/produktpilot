@@ -35,13 +35,6 @@ public class ProduktPilotSystemTest extends BaseContainerizedTest {
 
     @Test
     void simpleTokenValid() throws Exception {
-        MvcResult organizationCreation2 = this.mvc.perform(post("/api/private/organization/createFirstTime")
-                .content(testData.organizationFirstTime.getContentAsString(StandardCharsets.UTF_8))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-
-        MvcResult userLogin2 = this.mvc.perform(get("/api/public/auth/login?userName=john_doe&password=secretpassword")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn();
-
         MvcResult userJoin = this.mvc.perform(post("/api/public/auth/oneTimeJoin")
                 .content(testData.userJoin.getContentAsString(StandardCharsets.UTF_8))
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
