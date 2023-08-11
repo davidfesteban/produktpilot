@@ -7,7 +7,7 @@ public record OrganizationPayload(
         String licenseCode,
         Set<UserPayload> users,
         Set<WarehousePayload> warehouses,
-        Set<BillingPayload> billing
+        Set<BillingPayload> billings
 ) {
 }
 

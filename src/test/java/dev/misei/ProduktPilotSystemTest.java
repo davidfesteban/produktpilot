@@ -1,7 +1,10 @@
 package dev.misei;
 
+import dev.misei.domain.entity.Organization;
+import dev.misei.domain.entity.User;
 import dev.misei.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

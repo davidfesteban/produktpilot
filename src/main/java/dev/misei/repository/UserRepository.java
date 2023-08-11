@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
+    long deleteByUserNameIgnoreCase(String userName);
     Optional<User> findByUserNameIgnoreCase(@NonNull String userName);
 
 }

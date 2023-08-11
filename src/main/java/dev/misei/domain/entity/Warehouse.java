@@ -25,4 +25,9 @@ public class Warehouse {
 
     @DocumentReference
     private Set<Stand> stands = new HashSet<>();
+
+    public Warehouse addStand(Stand stand) {
+      stands.add(stand);
+      return this;
+    };
 }

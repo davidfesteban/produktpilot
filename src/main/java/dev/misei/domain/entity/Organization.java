@@ -29,9 +29,23 @@ public class Organization {
     private Set<User> users = new HashSet<>();
 
     @DocumentReference
-    private Set<Warehouse> warehouses;
+    private Set<Warehouse> warehouses = new HashSet<>();
 
     @DocumentReference
-    private Set<Billing> billing;
+    private Set<Billing> billings = new HashSet<>();
 
+    public Organization addUser(User user) {
+        users.add(user);
+        return this;
+    }
+
+    public Organization addWarehouse(Warehouse warehouse) {
+        warehouses.add(warehouse);
+        return this;
+    }
+
+    public Organization addBilling(Billing billing) {
+        billings.add(billing);
+        return this;
+    }
 }

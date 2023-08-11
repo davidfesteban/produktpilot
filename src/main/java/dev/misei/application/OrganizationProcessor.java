@@ -9,8 +9,6 @@ import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 @Service
 @AllArgsConstructor
 public class OrganizationProcessor {
@@ -18,14 +16,13 @@ public class OrganizationProcessor {
     private final OrganizationRepository organizationRepository;
     private final UserRepository userRepository;
 
-
     public Organization createFirstTimeOrganization(Organization entity, User user) {
         if (organizationRepository.count() != 0) {
             throw ProduktPilotException.Type.RESOURCE_ALREADY_EXISTS.boom();
         }
 
         user.setUserRole(UserRole.ADMIN);
-        entity.setUsers(Set.of(user));
+        entity.addUser(user);
 
         userRepository.save(user);
         return organizationRepository.save(entity);

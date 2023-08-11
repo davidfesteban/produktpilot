@@ -1,7 +1,14 @@
 {
   "name": "Business SL",
   "licenseCode": null,
-  "users": null,
+  "users": [{
+    "userName": "jo_do",
+    "fullName": "Jo Do",
+    "password": "secretpassword",
+    "base64Image": "c3RyaW5nIGltYWdl",
+    "phone": "+1234567890",
+    "userRole": "WORKER"
+  }],
   "warehouses": null,
   "billing": null
 }

@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Document
@@ -20,11 +21,16 @@ public class Stand {
     private String id;
 
     @DocumentReference
-    private Set<Material> materials;
+    private Set<Material> materials = new HashSet<>();
 
     /* Feature
     private String section;
     private String level;
     private ... Size;*/
     /* FEATURE A stand has a door and cannot be opened freely*/
+
+    private Stand addMaterial(Material material) {
+        materials.add(material);
+        return this;
+    }
 }

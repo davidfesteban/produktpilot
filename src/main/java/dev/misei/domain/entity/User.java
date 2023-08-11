@@ -13,7 +13,7 @@ import org.springframework.lang.Nullable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements Comparable<User> {
 
     @Id
     private String userName;
@@ -38,6 +38,10 @@ public class User {
         return userRole == UserRole.ADMIN;
     }
 
+    @Override
+    public int compareTo(User user) {
+        return this.userRole.compareTo(user.userRole) * -1;
+    }
 }
 
 
