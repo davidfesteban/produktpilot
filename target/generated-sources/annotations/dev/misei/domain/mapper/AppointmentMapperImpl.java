@@ -1,7 +1,5 @@
 package dev.misei.domain.mapper;
 
-import dev.misei.domain.entity.Appointment;
-import dev.misei.domain.payload.AppointmentPayload;
 import java.time.LocalDateTime;
 import javax.annotation.processing.Generated;
 

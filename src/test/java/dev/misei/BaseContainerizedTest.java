@@ -1,8 +1,7 @@
 package dev.misei;
 
-import dev.misei.repository.AppointmentRepository;
-import dev.misei.repository.AuthRepository;
-import dev.misei.repository.BusinessRepository;
+import dev.misei.repository.OrganizationRepository;
+import dev.misei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -12,17 +11,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-//@SpringBootTest
 public class BaseContainerizedTest {
 
     @Container
     static MongoDBContainer container = new MongoDBContainer(DockerImageName.parse("mongo:5"));
     @Autowired
-    private AppointmentRepository appointmentRepository;
+    private OrganizationRepository organizationRepository;
     @Autowired
-    private BusinessRepository businessRepository;
-    @Autowired
-    private AuthRepository authRepository;
+    private UserRepository userRepository;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {

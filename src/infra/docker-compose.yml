@@ -7,7 +7,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: booklink
+      MONGO_INITDB_DATABASE: produktpilot
     ports:
       - "27017:27017"
     volumes:
@@ -19,7 +19,7 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongo
       ME_CONFIG_MONGODB_PORT: 27017
       ME_CONFIG_MONGODB_ENABLE_ADMIN: false
-      ME_CONFIG_MONGODB_AUTH_DATABASE: booklink
+      ME_CONFIG_MONGODB_AUTH_DATABASE: produktpilot
       ME_CONFIG_MONGODB_AUTH_USERNAME: admin
       ME_CONFIG_MONGODB_AUTH_PASSWORD: password
       ME_CONFIG_BASICAUTH_USERNAME: admin

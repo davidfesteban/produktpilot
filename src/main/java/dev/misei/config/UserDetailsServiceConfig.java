@@ -1,7 +1,7 @@
 package dev.misei.config;
 
 import dev.misei.domain.entity.User;
-import dev.misei.repository.AuthRepository;
+import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,17 +16,17 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserDetailsServiceConfig implements UserDetailsService {
 
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = authRepository.findByEmail(email)
+        User user = userRepository.findByUserNameIgnoreCase(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with email: " + email));
 
         Set<GrantedAuthority> authorities = Set.of(new SimpleGrantedAuthority("Default"));
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
+        return new org.springframework.security.core.userdetails.User(user.getUserName(),
                 user.getPassword(),
                 authorities);
     }

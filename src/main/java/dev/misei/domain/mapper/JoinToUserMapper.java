@@ -14,11 +14,8 @@ public class JoinToUserMapper implements Function<UserPayload, User> {
 
     @Override
     public User apply(UserPayload payload) {
-        var user = new User();
-        user.setEmail(payload.getEmail());
-        user.setName(payload.getName());
-        user.setPassword(passwordEncoder.encode(payload.getPassword()));
-        user.setPhone(payload.getPhone());
+        var user = UserMapper.INSTANCE.toEntity(payload);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return user;
     }
 }

@@ -5,11 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.lang.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-
+//FEATURE: We could add some HR also in a future
+//FEATURE: Ticket system, Chat or Request more materials
 @Document
 @Data
 @AllArgsConstructor
@@ -17,34 +16,28 @@ import java.util.Set;
 public class User {
 
     @Id
-    private String email;
-    private String name;
+    private String userName;
+    private String fullName;
     private String password;
+
+    @Nullable
+    private String base64Image;
+    @Nullable
     private String phone;
 
-    @DocumentReference
-    private Business business;
+    //FEATURE: UserRoles are defined on the User level because only one organization exists
+    private UserRole userRole;
 
-    @DocumentReference
-    private Set<Appointment> appointments;
-
-    public void addAppointment(Appointment appointment) {
-        if (appointments == null) {
-            appointments = new HashSet<>();
-        }
-
-        appointments.add(appointment);
-    }
-
-    public void removeAppointment(Appointment appointment) {
-        if (appointments != null && !appointments.isEmpty()) {
-            appointments.remove(appointment);
-        }
-    }
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof User that) && this.email.equalsIgnoreCase(that.email);
+        return (o instanceof User that) && this.userName.equalsIgnoreCase(that.userName);
+    }
+
+    public boolean isAdmin() {
+        return userRole == UserRole.ADMIN;
     }
 
 }
+
+

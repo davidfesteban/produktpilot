@@ -1,10 +1,5 @@
 package dev.misei.domain.mapper;
 
-import dev.misei.domain.WorkingHours;
-import dev.misei.domain.entity.Appointment;
-import dev.misei.domain.entity.Business;
-import dev.misei.domain.payload.AppointmentPayload;
-import dev.misei.domain.payload.BusinessPayload;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -18,7 +13,7 @@ import javax.annotation.processing.Generated;
     date = "2023-07-30T01:04:58+0200",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 20.0.1 (Oracle Corporation)"
 )
-public class BusinessMapperImpl implements BusinessMapper {
+public class BusinessMapperImpl {
 
     @Override
     public Business toEntity(BusinessPayload payload) {
