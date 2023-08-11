@@ -17,7 +17,7 @@ public class StandProcessor {
     private final OrganizationRepository organizationRepository;
 
     public Organization create(String warehouseId, Stand entity, Organization org, User user) {
-        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCaseProxy(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (warehouse.getStands().stream().anyMatch(stand -> stand.equals(entity))) {
             throw ProduktPilotException.Type.RESOURCE_ALREADY_EXISTS.boom();
@@ -34,7 +34,7 @@ public class StandProcessor {
     }
 
     public Organization modify(String warehouseId, Stand entity, Organization org, User user) {
-        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCaseProxy(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (warehouse.getStands().stream().noneMatch(stand -> stand.equals(entity))) {
             throw ProduktPilotException.Type.RESOURCE_NOT_FOUND.boom();
@@ -50,7 +50,7 @@ public class StandProcessor {
     }
 
     public Organization delete(String warehouseId, String standId, Organization org, User requester) {
-        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCaseProxy(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
         var stand = warehouse.getStands().stream().filter(stand1 -> stand1.getId().equalsIgnoreCase(standId)).findFirst().orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (!requester.isAdmin()) {

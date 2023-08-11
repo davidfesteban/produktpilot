@@ -27,7 +27,7 @@ public abstract class BaseCrudController {
 
         try {
 
-            var user = organizationRepository.findByUsers_UserNameIgnoreCase(userEmail).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+            var user = organizationRepository.findByUsers_UserNameIgnoreCaseProxy(userEmail).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
             var organization = organizationRepository.findAll().stream().findFirst().orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
             return ResponseEntity.ok(action.apply(organization, user));

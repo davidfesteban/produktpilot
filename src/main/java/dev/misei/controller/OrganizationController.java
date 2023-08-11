@@ -20,8 +20,8 @@ public class OrganizationController extends BaseCrudController {
         super(organizationProcessor, jwtTokenProvider, organizationRepository);
     }
 
-    @GetMapping("/modifyOrganizationNameAndLicense")
-    public ResponseEntity<OrganizationPayload> modifyOrganizationNameAndLicense(String name, String license,
+    @GetMapping("/modify")
+    public ResponseEntity<OrganizationPayload> modify(String name, String license,
                                                                                 @RequestHeader("Authorization") String tokenRequest) {
         return perform((org, user) -> INSTANCE.toPayload(organizationProcessor.modifyOrganizationNameAndLicense(name, license, org, user)), tokenRequest);
     }

@@ -37,7 +37,7 @@ public class BillingProcessor {
     }
 
     public Organization delete(long timestamp, Organization org, User requester) {
-        var billing = organizationRepository.findByBillings_TimestampWhen(timestamp).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var billing = organizationRepository.findByBillings_TimestampWhenProxy(timestamp).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (requester.isAdmin() || billing.getUserCopyWho().equals(requester)) {
             org.getBillings().remove(billing);

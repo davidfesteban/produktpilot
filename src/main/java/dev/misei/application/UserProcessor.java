@@ -42,7 +42,7 @@ public class UserProcessor {
     }
 
     public Organization delete(String userName, Organization org, User requester) {
-        var user = organizationRepository.findByUsers_UserNameIgnoreCase(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var user = organizationRepository.findByUsers_UserNameIgnoreCaseProxy(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (!requester.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();

@@ -50,8 +50,6 @@ public class AuthController {
 
     @PostMapping("/oneTimeJoin")
     public ResponseEntity<Void> oneTimeJoin(@RequestBody UserPayload userPayload) {
-        var organization = organizationRepository.findAll().stream().findFirst();
-
         if (organizationRepository.count() != 0) {
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT)
                     .header("Message", "Resource already exist").build();

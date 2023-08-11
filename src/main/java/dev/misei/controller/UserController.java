@@ -36,4 +36,9 @@ public class UserController extends BaseCrudController {
     public ResponseEntity<OrganizationPayload> delete(String userName, @RequestHeader("Authorization") String tokenRequest) {
         return perform((org, user) -> INSTANCE.toPayload(userProcessor.delete(userName, org, user)), tokenRequest);
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<UserPayload> delete(@RequestHeader("Authorization") String tokenRequest) {
+        return perform((org, user) -> UserMapper.INSTANCE.toPayload(user), tokenRequest);
+    }
 }

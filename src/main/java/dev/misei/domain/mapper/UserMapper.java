@@ -21,7 +21,7 @@ public interface UserMapper {
 
     @Named("mapUserRoleToEnum")
     default UserRole mapUserRoleToEnum(String userRole) {
-        return UserRole.valueOf(userRole.toUpperCase());
+        return userRole != null ? UserRole.valueOf(userRole.toUpperCase()) : UserRole.WORKER;
     }
 
     @Named("mapUserRoleToString")

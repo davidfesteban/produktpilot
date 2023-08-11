@@ -37,7 +37,7 @@ public class BillingController extends BaseCrudController {
     }
 
     @GetMapping("/delete")
-    public ResponseEntity<OrganizationPayload> delete(long id, @RequestHeader("Authorization") String tokenRequest) {
-        return perform((org, user) -> INSTANCE.toPayload(billingProcessor.delete(id, org, user)), tokenRequest);
+    public ResponseEntity<OrganizationPayload> delete(String id, @RequestHeader("Authorization") String tokenRequest) {
+        return perform((org, user) -> INSTANCE.toPayload(billingProcessor.delete(Long.parseLong(id), org, user)), tokenRequest);
     }
 }

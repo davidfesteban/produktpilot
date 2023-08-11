@@ -43,7 +43,7 @@ public class WarehouseProcessor {
     }
 
     public Organization delete(String id, Organization org, User requester) {
-        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(id).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCaseProxy(id).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (!requester.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
