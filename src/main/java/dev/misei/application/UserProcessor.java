@@ -1,24 +1,22 @@
 package dev.misei.application;
 
 import dev.misei.domain.ProduktPilotException;
+import dev.misei.domain.entity.Organization;
 import dev.misei.domain.entity.User;
 import dev.misei.repository.OrganizationRepository;
-import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserProcessor {
 
-    private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
 
-    public User create(User entity, User user) {
-        if (userRepository.findByUserNameIgnoreCase(entity.getUserName()).isPresent()) {
+    public Organization create(User entity, Organization org, User user) {
+        if (org.getUsers().stream().anyMatch(user1 -> user1.equals(entity))) {
             throw ProduktPilotException.Type.RESOURCE_ALREADY_EXISTS.boom();
         }
 
@@ -26,41 +24,31 @@ public class UserProcessor {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
-
-        return entity;
+        return organizationRepository.save(org.addUser(entity));
     }
 
-    public User modify(User user, User requester) {
-        if (user.equals(requester) && user.compareTo(requester) != 0) {
+    public Organization modify(User entity, Organization org, User user) {
+        if (entity.equals(user) && entity.compareTo(user) != 0) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
-        } else if (!requester.isAdmin()) {
+        } else if (!user.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
+        var users = org.getUsers().stream().filter(user1 -> !user1.equals(entity)).collect(Collectors.toSet());
+        users.add(entity);
+        org.setUsers(users);
 
-        return user;
+        return organizationRepository.save(org);
     }
 
-    public User delete(String userName, User requester) {
-        var user = userRepository.findByUserNameIgnoreCase(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+    public Organization delete(String userName, Organization org, User requester) {
+        var user = organizationRepository.findByUsers_UserNameIgnoreCase(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (!requester.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.getUsers().remove(user);
-        userRepository.deleteByUserNameIgnoreCase(userName);
-        organizationRepository.save(organization);
-
-        return user;
+        org.getUsers().remove(user);
+        return organizationRepository.save(org);
     }
 }

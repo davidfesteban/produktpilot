@@ -1,63 +1,49 @@
 package dev.misei.application;
 
 import dev.misei.domain.ProduktPilotException;
+import dev.misei.domain.entity.Billing;
+import dev.misei.domain.entity.Organization;
 import dev.misei.domain.entity.User;
 import dev.misei.repository.OrganizationRepository;
-import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class BillingProcessor {
 
-    private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
 
-    public User create(User entity, User user) {
-        if (userRepository.findByUserNameIgnoreCase(entity.getUserName()).isPresent()) {
+    public Organization create(Billing entity, Organization org, User user) {
+        if (org.getBillings().stream().anyMatch(that -> that.equals(entity))) {
             throw ProduktPilotException.Type.RESOURCE_ALREADY_EXISTS.boom();
         }
 
-        if (!user.isAdmin()) {
-            throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
-        }
-
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
-
-        return entity;
+        return organizationRepository.save(org.addBilling(entity));
     }
 
-    public User modify(User user, User requester) {
-        if (user.equals(requester) && user.compareTo(requester) != 0) {
-            throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
-        } else if (!requester.isAdmin()) {
-            throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
+    public Organization modify(Billing entity, Organization org, User user) {
+        if (org.getBillings().stream().anyMatch(that -> that.equals(entity)) && (user.isAdmin() || entity.getUserCopyWho().equals(user))) {
+            var billings = org.getBillings().stream().filter(that -> !that.equals(entity)).collect(Collectors.toSet());
+            billings.add(entity);
+            org.setBillings(billings);
+
+            return organizationRepository.save(org);
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
-
-        return user;
+        throw ProduktPilotException.Type.RESOURCE_NOT_FOUND.boom();
     }
 
-    public User delete(String userName, User requester) {
-        var user = userRepository.findByUserNameIgnoreCase(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+    public Organization delete(long timestamp, Organization org, User requester) {
+        var billing = organizationRepository.findByBillings_TimestampWhen(timestamp).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
-        if (!requester.isAdmin()) {
-            throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
+        if (requester.isAdmin() || billing.getUserCopyWho().equals(requester)) {
+            org.getBillings().remove(billing);
+            return organizationRepository.save(org);
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.getUsers().remove(user);
-        userRepository.deleteByUserNameIgnoreCase(userName);
-        organizationRepository.save(organization);
-
-        return user;
+        throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
     }
 }

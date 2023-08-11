@@ -1,7 +1,7 @@
 package dev.misei.domain.mapper;
 
-import dev.misei.domain.entity.Organization;
-import dev.misei.domain.payload.OrganizationPayload;
+import dev.misei.domain.entity.Warehouse;
+import dev.misei.domain.payload.WarehousePayload;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 public interface WarehouseMapper {
     WarehouseMapper INSTANCE = Mappers.getMapper(WarehouseMapper.class);
 
-    Organization toEntity(OrganizationPayload payload);
+    Warehouse toEntity(WarehousePayload payload);
 
-    OrganizationPayload toPayload(Organization entity);
+    WarehousePayload toPayload(Warehouse entity);
 }

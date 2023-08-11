@@ -1,10 +1,11 @@
 package dev.misei.controller;
 
 import dev.misei.config.jwt.JwtTokenProvider;
+import dev.misei.domain.entity.Organization;
 import dev.misei.domain.mapper.JoinToUserMapper;
 import dev.misei.domain.payload.UserPayload;
+import dev.misei.repository.OrganizationRepository;
 import dev.misei.repository.TokenRepository;
-import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/public/auth")
 public class AuthController {
 
+    private final OrganizationRepository organizationRepository;
     private AuthenticationManager authenticationManager;
     private TokenRepository tokenRepository;
-    private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private JwtTokenProvider tokenProvider;
 
@@ -49,13 +50,17 @@ public class AuthController {
 
     @PostMapping("/oneTimeJoin")
     public ResponseEntity<Void> oneTimeJoin(@RequestBody UserPayload userPayload) {
-        if (userRepository.count() != 0) {
+        var organization = organizationRepository.findAll().stream().findFirst();
+
+        if (organizationRepository.count() != 0) {
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT)
-                    .header("Message", "There is already one administrator").build();
+                    .header("Message", "Resource already exist").build();
         }
 
+        var user = new JoinToUserMapper(passwordEncoder).apply(userPayload);
+
         try {
-            userRepository.save(new JoinToUserMapper(passwordEncoder).apply(userPayload));
+            organizationRepository.save(new Organization().addUser(user));
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).header("Message", e.getMessage()).build();

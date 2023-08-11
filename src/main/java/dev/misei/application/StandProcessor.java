@@ -1,23 +1,25 @@
 package dev.misei.application;
 
 import dev.misei.domain.ProduktPilotException;
+import dev.misei.domain.entity.Organization;
 import dev.misei.domain.entity.Stand;
 import dev.misei.domain.entity.User;
 import dev.misei.repository.OrganizationRepository;
-import dev.misei.repository.StandRepository;
-import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
-public class StandProcessor{
+public class StandProcessor {
 
-    private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
-    private final StandRepository standRepository;
-    public Stand create(Stand entity, User user) {
-        if (standRepository.findByIdIgnoreCase(entity.getId()).isPresent()) {
+
+    public Organization create(String warehouseId, Stand entity, Organization org, User user) {
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+
+        if (warehouse.getStands().stream().anyMatch(stand -> stand.equals(entity))) {
             throw ProduktPilotException.Type.RESOURCE_ALREADY_EXISTS.boom();
         }
 
@@ -25,41 +27,39 @@ public class StandProcessor{
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
+        org.getWarehouses().remove(warehouse);
+        warehouse.addStand(entity);
 
-        return entity;
+        return organizationRepository.save(org.addWarehouse(warehouse));
     }
 
-    public User modify(User user, User requester) {
-        if (user.equals(requester) && user.compareTo(requester) != 0) {
-            throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
-        } else if (!requester.isAdmin()) {
+    public Organization modify(String warehouseId, Stand entity, Organization org, User user) {
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+
+        if (warehouse.getStands().stream().noneMatch(stand -> stand.equals(entity))) {
+            throw ProduktPilotException.Type.RESOURCE_NOT_FOUND.boom();
+        } else if (!user.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
+        org.getWarehouses().remove(warehouse);
+        warehouse.setStands(warehouse.getStands().stream().filter(stand -> !stand.equals(entity)).collect(Collectors.toSet()));
+        warehouse.getStands().add(entity);
 
-        return user;
+        return organizationRepository.save(org.addWarehouse(warehouse));
     }
 
-    public User delete(String userName, User requester) {
-        var user = userRepository.findByUserNameIgnoreCase(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+    public Organization delete(String warehouseId, String standId, Organization org, User requester) {
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(warehouseId).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+        var stand = warehouse.getStands().stream().filter(stand1 -> stand1.getId().equalsIgnoreCase(standId)).findFirst().orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (!requester.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.getUsers().remove(user);
-        userRepository.deleteByUserNameIgnoreCase(userName);
-        organizationRepository.save(organization);
+        org.getWarehouses().remove(warehouse);
+        warehouse.getStands().remove(stand);
 
-        return user;
+        return organizationRepository.save(org.addWarehouse(warehouse));
     }
 }

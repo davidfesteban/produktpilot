@@ -1,10 +1,6 @@
 package dev.misei;
 
-import dev.misei.domain.entity.Organization;
-import dev.misei.domain.entity.User;
-import dev.misei.repository.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,9 +28,6 @@ public class ProduktPilotSystemTest extends BaseContainerizedTest {
     @Autowired
     private TestData testData;
 
-    @Autowired
-    private UserRepository userRepository;
-
 
     @Test
     void simpleTokenValid() throws Exception {
@@ -54,7 +47,7 @@ public class ProduktPilotSystemTest extends BaseContainerizedTest {
                 .headers(addTokenFromResult(userLogin))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
-        var userDB = userRepository.findByUserNameIgnoreCase("john_doe");
+        //var userDB = userRepository.findByUserNameIgnoreCase("john_doe");
 
         System.out.println(details);
     }

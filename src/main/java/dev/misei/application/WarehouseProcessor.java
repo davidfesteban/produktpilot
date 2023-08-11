@@ -1,21 +1,23 @@
 package dev.misei.application;
 
 import dev.misei.domain.ProduktPilotException;
+import dev.misei.domain.entity.Organization;
 import dev.misei.domain.entity.User;
+import dev.misei.domain.entity.Warehouse;
 import dev.misei.repository.OrganizationRepository;
-import dev.misei.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class WarehouseProcessor {
 
-    private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
 
-    public User create(User entity, User user) {
-        if (userRepository.findByUserNameIgnoreCase(entity.getUserName()).isPresent()) {
+    public Organization create(Warehouse entity, Organization org, User user) {
+        if (org.getWarehouses().stream().anyMatch(warehouse -> warehouse.equals(entity))) {
             throw ProduktPilotException.Type.RESOURCE_ALREADY_EXISTS.boom();
         }
 
@@ -23,41 +25,31 @@ public class WarehouseProcessor {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
-
-        return entity;
+        return organizationRepository.save(org.addWarehouse(entity));
     }
 
-    public User modify(User user, User requester) {
-        if (user.equals(requester) && user.compareTo(requester) != 0) {
-            throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
-        } else if (!requester.isAdmin()) {
+    public Organization modify(Warehouse entity, Organization org, User user) {
+        if (org.getWarehouses().stream().noneMatch(warehouse -> warehouse.equals(entity))) {
+            throw ProduktPilotException.Type.RESOURCE_NOT_FOUND.boom();
+        } else if (!user.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.addUser(user);
-        userRepository.save(user);
-        organizationRepository.save(organization);
+        var warehouses = org.getWarehouses().stream().filter(warehouse -> !warehouse.equals(entity)).collect(Collectors.toSet());
+        warehouses.add(entity);
+        org.setWarehouses(warehouses);
 
-        return user;
+        return organizationRepository.save(org);
     }
 
-    public User delete(String userName, User requester) {
-        var user = userRepository.findByUserNameIgnoreCase(userName).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
+    public Organization delete(String id, Organization org, User requester) {
+        var warehouse = organizationRepository.findByWarehouses_NameIgnoreCase(id).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
 
         if (!requester.isAdmin()) {
             throw ProduktPilotException.Type.NOT_ENOUGH_PRIVILEGES.boom();
         }
 
-        var organization = organizationRepository.findByUsers_UserNameIgnoreCase(user.getUserName()).orElseThrow(ProduktPilotException.Type.RESOURCE_NOT_FOUND::boom);
-        organization.getUsers().remove(user);
-        userRepository.deleteByUserNameIgnoreCase(userName);
-        organizationRepository.save(organization);
-
-        return user;
+        org.getWarehouses().remove(warehouse);
+        return organizationRepository.save(org);
     }
 }

@@ -4,9 +4,11 @@ import dev.misei.application.OrganizationProcessor;
 import dev.misei.config.jwt.JwtTokenProvider;
 import dev.misei.domain.payload.OrganizationPayload;
 import dev.misei.repository.OrganizationRepository;
-import dev.misei.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static dev.misei.domain.mapper.OrganizationMapper.INSTANCE;
 
@@ -14,21 +16,18 @@ import static dev.misei.domain.mapper.OrganizationMapper.INSTANCE;
 @RequestMapping("/api/private/organization")
 public class OrganizationController extends BaseCrudController {
 
-    private final OrganizationProcessor organizationProcessor;
-
-    public OrganizationController(JwtTokenProvider jwtTokenProvider, UserRepository userRepository, OrganizationRepository organizationRepository, OrganizationProcessor organizationProcessor) {
-        super(jwtTokenProvider, userRepository, organizationRepository);
-        this.organizationProcessor = organizationProcessor;
+    public OrganizationController(JwtTokenProvider jwtTokenProvider, OrganizationRepository organizationRepository, OrganizationProcessor organizationProcessor) {
+        super(organizationProcessor, jwtTokenProvider, organizationRepository);
     }
 
-    @PostMapping("/createFirstTime")
-    public ResponseEntity<OrganizationPayload> createFirstTime(@RequestBody OrganizationPayload organizationPayload,
-                                                               @RequestHeader("Authorization") String tokenRequest) {
-        return perform(user -> INSTANCE.toPayload(organizationProcessor.createFirstTimeOrganization(INSTANCE.toEntity(organizationPayload), user)), tokenRequest);
+    @GetMapping("/modifyOrganizationNameAndLicense")
+    public ResponseEntity<OrganizationPayload> modifyOrganizationNameAndLicense(String name, String license,
+                                                                                @RequestHeader("Authorization") String tokenRequest) {
+        return perform((org, user) -> INSTANCE.toPayload(organizationProcessor.modifyOrganizationNameAndLicense(name, license, org, user)), tokenRequest);
     }
 
     @GetMapping("/details")
     public ResponseEntity<OrganizationPayload> details(@RequestHeader("Authorization") String tokenRequest) {
-        return perform(user -> INSTANCE.toPayload(organizationProcessor.details(user)), tokenRequest);
+        return perform((org, user) -> INSTANCE.toPayload(org), tokenRequest);
     }
 }

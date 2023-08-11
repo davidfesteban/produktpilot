@@ -4,13 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Document
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,11 +20,15 @@ public class Warehouse {
     //If you don´t care about stand
     private boolean generic;
 
-    @DocumentReference
     private Set<Stand> stands = new HashSet<>();
 
     public Warehouse addStand(Stand stand) {
-      stands.add(stand);
-      return this;
-    };
+        stands.add(stand);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Warehouse that) && this.name.equalsIgnoreCase(that.name);
+    }
 }

@@ -25,13 +25,10 @@ public class Organization {
     @Nullable
     private String licenseCode;
 
-    @DocumentReference
     private Set<User> users = new HashSet<>();
 
-    @DocumentReference
     private Set<Warehouse> warehouses = new HashSet<>();
 
-    @DocumentReference
     private Set<Billing> billings = new HashSet<>();
 
     public Organization addUser(User user) {

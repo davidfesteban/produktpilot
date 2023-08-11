@@ -9,7 +9,6 @@ import org.springframework.lang.Nullable;
 
 //FEATURE: We could add some HR also in a future
 //FEATURE: Ticket system, Chat or Request more materials
-@Document
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

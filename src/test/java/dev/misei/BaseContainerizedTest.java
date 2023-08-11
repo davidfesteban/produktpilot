@@ -1,7 +1,6 @@
 package dev.misei;
 
 import dev.misei.repository.OrganizationRepository;
-import dev.misei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -17,8 +16,6 @@ public class BaseContainerizedTest {
     static MongoDBContainer container = new MongoDBContainer(DockerImageName.parse("mongo:5"));
     @Autowired
     private OrganizationRepository organizationRepository;
-    @Autowired
-    private UserRepository userRepository;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {

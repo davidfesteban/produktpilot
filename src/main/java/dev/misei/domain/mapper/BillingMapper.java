@@ -10,7 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface BillingMapper {
     BillingMapper INSTANCE = Mappers.getMapper(BillingMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     Billing toEntity(BillingPayload payload);
 
     BillingPayload toPayload(Billing entity);

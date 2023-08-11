@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @EnableMongoRepositories
 public class ProduktPilotApplication {
-    //TODO: Keep a reference to each appointment in memory and delete each day.
+    //TODO: Maybe we need to add a listener and a lock for each call because of the way of managing organizations
     public static void main(String[] args) {
         SpringApplication.run(ProduktPilotApplication.class, args);
     }
